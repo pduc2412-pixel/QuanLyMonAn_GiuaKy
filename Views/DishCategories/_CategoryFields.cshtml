@@ -1,0 +1,11 @@
+@model DishCategory_BIT240069
+<div class="mb-3">
+    <label asp-for="Name" class="form-label">@L["f_name"]</label>
+    <input asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Description" class="form-label">@L["f_description"]</label>
+    <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>

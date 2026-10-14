@@ -1,0 +1,91 @@
+@model Dish_BIT240069
+@{
+    ViewData["Title"] = L["title_dish_details"];
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@Model.Name</h2>
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">@L["btn_edit"]</a>
+        <a class="btn btn-outline-primary" asp-action="Index">@L["btn_back"]</a>
+    </div>
+</div>
+
+<div class="card card-body mb-4">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">@L["f_category"]</dt>
+        <dd class="col-sm-9">@L.Cat(Model.Category?.Name)</dd>
+        <dt class="col-sm-3">@L["f_price"]</dt>
+        <dd class="col-sm-9">@Model.Price.ToString("#,##0.##")</dd>
+        <dt class="col-sm-3">@L["f_prep_time"]</dt>
+        <dd class="col-sm-9">@Model.PreparationTime @L["minutes"]</dd>
+        <dt class="col-sm-3">@L["f_prep_class"]</dt>
+        <dd class="col-sm-9"><span class="badge @(Model.PrepClassKey == "prep_quick" ? "bg-info text-dark" : "bg-secondary")">@L[Model.PrepClassKey]</span></dd>
+        <dt class="col-sm-3">@L["f_status"]</dt>
+        <dd class="col-sm-9">
+            @if (Model.IsAvailable)
+            {
+                <span class="badge bg-success">@L["status_available"]</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">@L["status_unavailable"]</span>
+            }
+        </dd>
+        <dt class="col-sm-3">@L["f_description"]</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+    </dl>
+</div>
+
+<h4>@L["title_images"]</h4>
+@if (!Model.Images.Any())
+{
+    <div class="alert alert-info">@L["no_images_yet"]</div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        @foreach (var img in Model.Images)
+        {
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 @(img.IsThumbnail ? "border-primary border-2" : "")">
+                    <img src="@img.ImageUrl" class="card-img-top" alt="@Model.Name" style="height:200px;object-fit:cover"
+                         onerror="this.onerror=null;this.src='/img/placeholder.svg'" />
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        @if (img.IsThumbnail)
+                        {
+                            <span class="badge bg-primary">@L["badge_thumbnail"]</span>
+                        }
+                        else
+                        {
+                            <form method="post" asp-action="SetThumbnail" asp-route-id="@img.Id">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">@L["btn_set_thumb"]</button>
+                            </form>
+                        }
+                        <form method="post" asp-action="DeleteImage" asp-route-id="@img.Id"
+                              onsubmit="return confirm('@L["confirm_delete"]');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">@L["btn_delete"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<form method="post" asp-action="AddImage" asp-route-id="@Model.Id" class="card card-body" novalidate>
+    <div class="row g-3 align-items-end">
+        <div class="col-md-7">
+            <label class="form-label">@L["f_image_url"]</label>
+            <input type="text" name="imageUrl" class="form-control" placeholder="https://..." />
+        </div>
+        <div class="col-md-3">
+            <div class="form-check">
+                <input type="checkbox" name="isThumbnail" value="true" id="isThumb" class="form-check-input" />
+                <label for="isThumb" class="form-check-label">@L["f_thumbnail"]</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">@L["btn_add_image"]</button>
+        </div>
+    </div>
+</form>

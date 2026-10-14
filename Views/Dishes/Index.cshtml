@@ -1,0 +1,128 @@
+@model DishListViewModel
+@{
+    ViewData["Title"] = L["title_dishes"];
+    var q = Model.Query;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@L["title_dishes"]</h2>
+    <a class="btn btn-primary" asp-action="Create">@L["btn_create_dish"]</a>
+</div>
+
+@if (Model.PriceRangeInvalid)
+{
+    <div class="alert alert-warning">@L["err_price_range"]</div>
+}
+
+<form method="get" asp-action="Index" class="card card-body mb-4" novalidate>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">@L["filter_search"]</label>
+            <input type="text" name="Search" value="@q.Search" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">@L["filter_category"]</label>
+            <select name="CategoryId" class="form-select">
+                <option value="">@L["filter_all_categories"]</option>
+                @foreach (var c in Model.Categories)
+                {
+                    <option value="@c.Id" selected="@(q.CategoryId == c.Id)">@L.Cat(c.Name)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">@L["filter_status"]</label>
+            <select name="Status" class="form-select">
+                <option value="all" selected="@(q.Status != "available" && q.Status != "unavailable")">@L["filter_all_status"]</option>
+                <option value="available" selected="@(q.Status == "available")">@L["status_available"]</option>
+                <option value="unavailable" selected="@(q.Status == "unavailable")">@L["status_unavailable"]</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">@L["filter_min_price"]</label>
+            <input type="number" step="any" name="MinPrice" value="@q.MinPrice" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">@L["filter_max_price"]</label>
+            <input type="number" step="any" name="MaxPrice" value="@q.MaxPrice" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">@L["filter_sort"]</label>
+            <select name="Sort" class="form-select">
+                <option value="" selected="@(string.IsNullOrEmpty(q.Sort) || (q.Sort != "price_asc" && q.Sort != "price_desc" && q.Sort != "time_asc"))">@L["sort_default"]</option>
+                <option value="price_asc" selected="@(q.Sort == "price_asc")">@L["sort_price_asc"]</option>
+                <option value="price_desc" selected="@(q.Sort == "price_desc")">@L["sort_price_desc"]</option>
+                <option value="time_asc" selected="@(q.Sort == "time_asc")">@L["sort_time_asc"]</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary w-100">@L["btn_search"]</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">@L["btn_reset"]</a>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Dishes.Any())
+{
+    <div class="alert alert-info">@L["no_results"]</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th>@L["f_image"]</th>
+                    <th>@L["f_name"]</th>
+                    <th>@L["f_category"]</th>
+                    <th class="text-end">@L["f_price"]</th>
+                    <th>@L["f_prep_time"]</th>
+                    <th>@L["f_prep_class"]</th>
+                    <th>@L["f_status"]</th>
+                    <th>@L["f_actions"]</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var d in Model.Dishes)
+            {
+                var thumb = d.ThumbnailOrFirst;
+                <tr class="@(d.IsAvailable ? "" : "table-secondary")">
+                    <td style="width:90px">
+                        @if (thumb != null)
+                        {
+                            <img src="@thumb.ImageUrl" alt="@d.Name" class="img-thumbnail" style="width:80px;height:60px;object-fit:cover"
+                                 onerror="this.onerror=null;this.src='/img/placeholder.svg'" />
+                        }
+                        else
+                        {
+                            <span class="text-muted small">@L["no_image"]</span>
+                        }
+                    </td>
+                    <td><a asp-action="Details" asp-route-id="@d.Id">@d.Name</a></td>
+                    <td>@L.Cat(d.Category?.Name)</td>
+                    <td class="text-end">@d.Price.ToString("#,##0.##")</td>
+                    <td>@d.PreparationTime @L["minutes"]</td>
+                    <td><span class="badge @(d.PrepClassKey == "prep_quick" ? "bg-info text-dark" : "bg-secondary")">@L[d.PrepClassKey]</span></td>
+                    <td>
+                        @if (d.IsAvailable)
+                        {
+                            <span class="badge bg-success">@L["status_available"]</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">@L["status_unavailable"]</span>
+                        }
+                    </td>
+                    <td class="text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@d.Id">@L["btn_details"]</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@d.Id">@L["btn_edit"]</a>
+                        <form method="post" asp-action="Delete" asp-route-id="@d.Id" class="d-inline"
+                              onsubmit="return confirm('@L["confirm_delete"]');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">@L["btn_delete"]</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

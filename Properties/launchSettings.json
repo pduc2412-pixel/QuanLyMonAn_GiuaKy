@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "DishManagement": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54801;http://localhost:54802"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+@model DishCategory_BIT240069
+@{
+    ViewData["Title"] = L["title_edit_category"];
+}
+<h2 class="mb-3">@L["title_edit_category"]</h2>
+<form method="post" asp-action="Edit" asp-route-id="@Model.Id" class="card card-body" novalidate>
+    <partial name="_CategoryFields" model="Model" />
+    <div>
+        <button type="submit" class="btn btn-primary">@L["btn_save"]</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">@L["btn_cancel"]</a>
+    </div>
+</form>

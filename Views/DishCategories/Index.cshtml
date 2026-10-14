@@ -1,0 +1,42 @@
+@model List<CategoryListItem>
+@{
+    ViewData["Title"] = L["title_categories"];
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@L["title_categories"]</h2>
+    <a class="btn btn-primary" asp-action="Create">@L["btn_create_category"]</a>
+</div>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">@L["no_categories"]</div>
+}
+else
+{
+    <table class="table table-hover align-middle bg-white">
+        <thead class="table-light">
+            <tr>
+                <th>@L["f_name"]</th>
+                <th>@L["f_description"]</th>
+                <th>@L["f_dish_count"]</th>
+                <th>@L["f_actions"]</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@L.Cat(item.Category.Name)</td>
+                <td>@L.Cat(item.Category.Description)</td>
+                <td>@item.DishCount</td>
+                <td class="text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@item.Category.Id">@L["btn_edit"]</a>
+                    <form method="post" asp-action="Delete" asp-route-id="@item.Category.Id" class="d-inline"
+                          onsubmit="return confirm('@L["confirm_delete"]');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">@L["btn_delete"]</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,34 @@
+@model Dish_BIT240069
+<div class="mb-3">
+    <label asp-for="Name" class="form-label">@L["f_name"]</label>
+    <input asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Price" class="form-label">@L["f_price"]</label>
+        <input asp-for="Price" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="PreparationTime" class="form-label">@L["f_prep_time"]</label>
+        <input asp-for="PreparationTime" type="number" step="1" class="form-control" />
+        <span asp-validation-for="PreparationTime" class="text-danger"></span>
+    </div>
+</div>
+<div class="mb-3">
+    <label asp-for="DishCategoryId" class="form-label">@L["f_category"]</label>
+    <select asp-for="DishCategoryId" asp-items="(SelectList)ViewBag.Categories" class="form-select">
+        <option value="">@L["select_category"]</option>
+    </select>
+    <span asp-validation-for="DishCategoryId" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Description" class="form-label">@L["f_description"]</label>
+    <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+<div class="form-check mb-3">
+    <input asp-for="IsAvailable" class="form-check-input" />
+    <label asp-for="IsAvailable" class="form-check-label">@L["f_available"]</label>
+</div>
